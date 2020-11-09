@@ -11,7 +11,11 @@ import Profil from '../views/Profil';
 import Basket from '../views/Basket';
 import SummaryBasket from '../views/SummaryBasket';
 import Payement from '../views/Payement';
+import ValidationStock from '../views/ValidationStock';
+import ValidationStockSummary from '../views/ValidationStockSummary';
 import { AuthContext } from './Context';
+
+// const { user } = React.useContext(AuthContext);
 
 const ProductsStack = createStackNavigator();
 const ProductsStackScreen = ({ navigation }) => (
@@ -79,8 +83,29 @@ const basketStackScreen = ({ navigation }) => {
     </basketStack.Navigator>
 )};
 
+const validationStack = createStackNavigator();
+const validationStackScreen = ({ navigation }) => {
+    
+    return (
+    <validationStack.Navigator >
+        <validationStack.Screen name="stock" component={ValidationStock} options={{
+            title: "Validation du stock",
+            headerLeft: () => (
+                <TouchableOpacity style={{ paddingLeft: 10, paddingTop: 5 }} onPress={() => navigation.openDrawer()}>
+                    <Icon name='ios-menu' size={25} color='black' />
+                </TouchableOpacity>
+            ),
+        }} />
+        <validationStack.Screen name="summary" component={ValidationStockSummary} options={{
+            title: "résumé du stock",
+        }} />
+    </validationStack.Navigator>
+)};
 const Drawer = createDrawerNavigator();
-export const DrawerScreen = () => (
+export const DrawerScreen = () => {
+    
+    const { user } = React.useContext(AuthContext);
+    return (
     <Drawer.Navigator initialRouteName="Profil"
         drawerType="back"
         drawerContentOptions={{
@@ -94,5 +119,10 @@ export const DrawerScreen = () => (
         <Drawer.Screen name="Profil" component={profilStackScreen} />
         <Drawer.Screen name="Panier" component={basketStackScreen} />
         <Drawer.Screen name="Magasin" component={ProductsStackScreen} />
+        {user.user_type == 1 && (
+            <Drawer.Screen name="validation" component={validationStackScreen} options={{
+                title: "Validation du stock"
+            }}/>
+        )}
     </Drawer.Navigator>
-);
+)};

@@ -11,6 +11,7 @@ import Router from './src/router';
 export default function App() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [userToken, setUserToken] = React.useState(null);
+  const [user, setUser] = React.useState(null)
   const [basket, setBasket] = React.useState([]);
   React.useEffect(() => {
     async function fetchData()
@@ -30,6 +31,7 @@ export default function App() {
       setIsLoading,
       userToken,
       basket,
+      user,
       addToBasket: async (product) => {
         let basket = JSON.parse(await AsyncStorage.getItem('@basket'))
         if (basket === null)
@@ -70,6 +72,7 @@ export default function App() {
           setIsLoading(true)
           var res = await axios.get(`/me`, { headers: { Authorization: `Bearer ${token}` } })
           setUserToken(token)
+          setUser(res.data.data) //pq y a data dans le retour, inutile...
           AsyncStorage.setItem('user_token', token)
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         }
