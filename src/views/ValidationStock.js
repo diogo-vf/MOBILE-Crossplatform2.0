@@ -61,9 +61,6 @@ export default function ValidationStock(props) {
             }}
         >
             <ScrollView>
-                <TouchableOpacity onPress={() => navigation.navigate("summary")}>
-                    <Text>validation du stock WIP</Text>
-                </TouchableOpacity>
                 {product && (
                     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                         <Text style={styles.title}>Validation du stock</Text>
