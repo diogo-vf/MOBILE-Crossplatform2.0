@@ -11,7 +11,7 @@ export default function ValidationStock({ route, navigation }) {
         var list = []
         var msg = "Les quantités ont été enregistrées"
         products.forEach(({ id, stock }) => {
-            list = [...list, { "id": id, "quantity": stock+1 }]
+            list = [...list, { "id": id, "quantity": stock }]
         });
         console.log({ "quantities" : list })
         try{
