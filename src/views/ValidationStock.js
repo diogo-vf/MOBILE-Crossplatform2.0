@@ -1,15 +1,14 @@
 import React, { useEffect } from 'react';
 import axios from 'axios'
-import { View, Dimensions, TextInput, ImageBackground, Text, StyleSheet, Image } from 'react-native';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { FlatList, View, ScrollView, ImageBackground, StyleSheet, Dimensions, Text, TextInput, Image, TouchableOpacity, Alert, RefreshControl } from 'react-native';
 import { ip, port } from '../../app.json';
 
 export default function ValidationStock(props) {
     const { navigation } = props;
-    const [index, setIndex] = React.useState(0)
-    const [products, setProducts] = React.useState([])
-    const [product, setProduct] = React.useState(null)
-    const [quantity, setQuantity] = React.useState(0)
+    let [index, setIndex] = React.useState(0)
+    let [products, setProducts] = React.useState([])
+    let [product, setProduct] = React.useState(null)
+    let [quantity, setQuantity] = React.useState(0)
 
     useEffect(() => {
         async function fetchData() {
@@ -20,7 +19,10 @@ export default function ValidationStock(props) {
     async function getProducts() {
         var res = await axios.get('/products')
         setProducts(res.data.data)
+        
+        setQuantity(res.data.data.filter(({ id }) => id == products[index]).stock)
         setProduct(res.data.data.filter(({ id }) => id == products[index]))
+
         console.log(product)
         return await res.data.data
     }
@@ -32,20 +34,22 @@ export default function ValidationStock(props) {
             setIndex(products.length - 1)
         else
             setIndex(value)
-        setProduct(products.filter(({ id }) => id == products[index]))            
-        // setQuantity(products.filter(({ id }) => id == products[index]).stock) 
+        setProduct(products.filter(({ id }) => id == products[index]))
+        setQuantity(products.filter(({ id }) => id == products[index]).stock)
     }
-    function updateQuantity(quantity){
-        console.log(quantity)
-        if(isNaN(quantity) || quantity<0)
-        {
-            setQuantity(products[index].stock)
-            return
-        }
+    function updateQuantity(quantity) {
+        // console.log(quantity)
+        // if (isNaN(quantity) || quantity < 0) {
+        //     setQuantity(products[index].stock)
+        //     return
+        // }
 
-        setQuantity(quantity) 
-        nextProduct(index+1) 
-        setQuantity(0)  
+        // products.find(({ id }) => products[index].id == id).stock = quantity
+        if(products.length -1 == index){            
+            navigation.navigate("summary", {products: products})
+        }
+        nextProduct(index + 1)
+        // setQuantity(0)
     }
     return (
         <ImageBackground
@@ -73,15 +77,13 @@ export default function ValidationStock(props) {
                                 <Text>&gt;</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" , flexDirection: "row", width: "100%" }}>
+                        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", flexDirection: "row", width: "100%" }}>
                             <Text style={{ color: "white" }}>Stock</Text>
                             <TextInput
                                 style={styles.textInput}
                                 placeholderTextColor="rgb(180, 180, 180)"
                                 keyboardType="numeric"
                                 value={quantity}
-                                onChange={setQuantity}
-
                             />
                             <Text style={{ color: "white" }}>{products[index].unit}</Text>
                             <TouchableOpacity onPress={() => updateQuantity(quantity)} style={styles.button}>
